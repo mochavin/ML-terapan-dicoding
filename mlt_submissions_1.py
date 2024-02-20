@@ -43,9 +43,10 @@ df.head()
 
 """# Eksplorasi data
 
-## Deskripsi Variabel
+## Deskripsi Variabel - Analisis Univariate
 
 - `Area`: Luas area
+
 - `Perimeter`: Keliling
 - `Major_Axis_Length`: Panjang sumbu utama
 - `Minor_Axis_Length`: Panjang sumbu minor
@@ -62,6 +63,22 @@ df.head()
 
 df.info()
 df.describe()
+
+columns_to_analyze = ['Area', 'Convex_Area', 'Equiv_Diameter', 'Solidity', 'Perimeter',
+                      'Major_Axis_Length', 'Eccentricity', 'Aspect_Ration', 'Extent',
+                      'Minor_Axis_Length', 'Roundness', 'Compactness']
+
+# Mengatur ukuran kanvas
+plt.figure(figsize=(20, 30))
+
+# Membuat plot untuk setiap kolom
+for i, column in enumerate(columns_to_analyze, 1):
+    plt.subplot(6, 2a, i)  # 4 baris, 3 kolom, nomor plot ke-i
+    sns.histplot(data=df, x=column, kde=True)
+    plt.title(f"{column} Distribution", fontsize=15)
+
+plt.tight_layout()
+plt.show()
 
 """## Mengecek Missing Value"""
 
@@ -146,7 +163,7 @@ Mengecek menggunakan headmap dan plot antar variabel
 """
 
 # Correlation
-corr = df_clean.corr()
+corr = df.corr()
 
 # Figure
 plt.figure(figsize=(10,8))
@@ -154,7 +171,7 @@ sns.heatmap(corr, annot=True)
 plt.show()
 
 plt.figure(figsize=(15,20))
-sns.pairplot(data=df_clean)
+sns.pairplot(data=df)
 plt.show()
 
 """Melalui Correlation Matrix dan Pairplot di atas dapat disimpulkan :
