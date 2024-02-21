@@ -35,6 +35,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report, f1_score, precision_score, recall_score, confusion_matrix
+from sklearn.metrics import accuracy_score
 
 """# Load data"""
 
@@ -73,10 +74,22 @@ plt.figure(figsize=(20, 30))
 
 # Membuat plot untuk setiap kolom
 for i, column in enumerate(columns_to_analyze, 1):
-    plt.subplot(6, 2a, i)  # 4 baris, 3 kolom, nomor plot ke-i
+    plt.subplot(6, 2, i)  # 6 baris, 2 kolom, nomor plot ke-i
     sns.histplot(data=df, x=column, kde=True)
     plt.title(f"{column} Distribution", fontsize=15)
 
+plt.tight_layout()
+plt.show()
+
+plt.figure(figsize=(20, 30))
+num_plots = min(len(columns_to_analyze), 12)  # Jumlah maksimal subplot adalah 12
+num_rows = num_plots // 3 + (num_plots % 3 > 0)  # Hitung jumlah baris, 3 kolom per baris
+for i, column in enumerate(columns_to_analyze[:num_plots], 1):  # Ambil maksimal 12 kolom
+    plt.subplot(num_rows, 3, i)  # 3 kolom per baris
+    for class_label, group in df.groupby('Class'):
+        sns.histplot(data=group, x=column, kde=True, label=f'Varietas {class_label}')
+    plt.title(column, fontsize=15)  # Menghapus "Distribution"
+    plt.legend()
 plt.tight_layout()
 plt.show()
 
@@ -242,6 +255,7 @@ knn.fit(X_train_scaled, y_train)
 pred = knn.predict(X_train_scaled)
 knn_f1 = f1_score(y_train, pred)
 print("KNN - F1 Score train : {:.4}%\n".format(knn_f1*100))
+print("KNN - Accuracy Score train : {:.4}%\n".format(accuracy_score(y_train, pred)*100))
 
 """## Random Forest
 
@@ -255,6 +269,7 @@ pred = rfc.predict(X_train_scaled)
 
 rfc_f1 = f1_score(y_train, pred)
 print("RF - F1 Score train : {:.4}%\n".format(rfc_f1*100))
+print("RF - Accuracy train : {:.4}%\n".format(accuracy_score(y_train, pred)*100))
 
 """`max_depth`: Mengatur kedalaman maksimum dari setiap pohon dalam Random Forest. Semakin tinggi nilainya, semakin kompleks modelnya, tetapi terlalu tinggi dapat menyebabkan overfitting.
 
@@ -275,6 +290,7 @@ boosting.fit(X_train_scaled, y_train)
 pred = boosting.predict(X_train_scaled)
 boosting_f1 = f1_score(y_train, pred)
 print("Boosting - F1 Score train : {:.4}%\n".format(boosting_f1*100))
+print("Boosting - F1 Score train : {:.4}%\n".format(accuracy_score(y_train, pred)*100))
 
 """`learning_rate`: Mengatur seberapa besar setiap model lemah dalam ensemble "belajar" dari kesalahan sebelumnya. Semakin kecil nilai learning_rate, semakin lambat pembelajaran model.
 
@@ -287,25 +303,54 @@ Evaluasi model adalah proses penting dalam pengembangan model machine learning y
 `F1 Score` merupakan metrik evaluasi yang digunakan dalam klasifikasi untuk mengukur keseimbangan antara presisi (`precision`) dan `recall` dari suatu model. Dengan menggunakan rata-rata harmonis dari kedua metrik tersebut, `F1 Score` memberikan gambaran yang baik tentang seberapa baik model dapat memprediksi kelas positif secara tepat dan seberapa banyak kelas positif yang dapat diidentifikasi secara keseluruhan. Hal ini membuat `F1 Score` berguna terutama dalam kasus di mana distribusi kelas tidak seimbang atau ketika kita ingin memperhitungkan trade-off antara `Precision` dan `Recall` dalam evaluasi model klasifikasi.
 """
 
-# Buat variabel models yang isinya adalah dataframe nilai models data train dan test pada masing-masing algoritma
-models = pd.DataFrame(columns=['train', 'test'], index = ['KNN', 'rfc', 'Boosting'])
+from sklearn.metrics import accuracy_score
+
+# Buat DataFrame untuk menyimpan nilai F1 score dan akurasi
+models = pd.DataFrame(columns=['F1 Score Train', 'F1 Score Test', 'Accuracy Train', 'Accuracy Test'], index=['KNN', 'rfc', 'Boosting'])
 
 # Buat dictionary untuk setiap algoritma yang digunakan
 model_dict = {'KNN': knn, 'rfc': rfc, 'Boosting': boosting}
 
-# Hitung Mean Squared Error masing-masing algoritma pada data train dan test
+# Hitung F1 score dan akurasi masing-masing algoritma pada data train dan test
 for name, model in model_dict.items():
-  models.loc[name, 'train'] = f1_score(y_true=y_train, y_pred=model.predict(X_train_scaled))
-  models.loc[name, 'test'] = f1_score(y_true=y_test, y_pred=model.predict(X_test_scaled))
+    # F1 score untuk data train
+    f1_train = f1_score(y_true=y_train, y_pred=model.predict(X_train_scaled))
+    models.loc[name, 'F1 Score Train'] = f1_train
+
+    # F1 score untuk data test
+    f1_test = f1_score(y_true=y_test, y_pred=model.predict(X_test_scaled))
+    models.loc[name, 'F1 Score Test'] = f1_test
+
+    # Akurasi untuk data train
+    accuracy_train = accuracy_score(y_true=y_train, y_pred=model.predict(X_train_scaled))
+    models.loc[name, 'Accuracy Train'] = accuracy_train
+
+    # Akurasi untuk data test
+    accuracy_test = accuracy_score(y_true=y_test, y_pred=model.predict(X_test_scaled))
+    models.loc[name, 'Accuracy Test'] = accuracy_test
 
 models
 
 """Untuk memudahkan, dibuat visualisasi perbandingan peforma ketiga model tersebut"""
 
-# Memplot Hasil Metric
-fig, ax = plt.subplots()
-models.sort_values(by="test", ascending=False).plot(kind='bar', ax=ax, zorder=3)
-ax.grid(zorder=0)
+fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(15, 6))
+
+# Plot F1 Score
+models.sort_values(by="F1 Score Test", ascending=False)[['F1 Score Train', 'F1 Score Test']].plot(kind='bar', ax=axes[0], zorder=3, alpha=0.8)
+axes[0].set_title('F1 Score Comparison')
+axes[0].set_ylabel('F1 Score')
+axes[0].grid(zorder=0)
+axes[0].legend(loc='lower right')
+
+# Plot Accuracy Score
+models.sort_values(by="Accuracy Test", ascending=False)[['Accuracy Train', 'Accuracy Test']].plot(kind='bar', ax=axes[1], zorder=3, color=['skyblue', 'salmon'], alpha=0.8)
+axes[1].set_title('Accuracy Score Comparison')
+axes[1].set_ylabel('Accuracy Score')
+axes[1].grid(zorder=0)
+axes[1].legend(loc='lower right')
+
+plt.tight_layout()
+plt.show()
 
 """Menguji 10 sample dengan menggunakan ketiga model tersebut"""
 

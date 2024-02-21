@@ -14,13 +14,15 @@ _Machine learning_ dapat membedakan varietas bibit biji labu dengan akurat dan e
 
 > Dengan membangun model _Machine Learning_ untuk klasifikasi varietas benih labu berdasarkan atribut fisik seperti luas, soliditas, rasio aspek, dan lainnya, mampu mencapai tujuan-tujuan penting dalam pertanian. Pertama, model ini membantu meningkatkan kemurnian varietas dengan kemampuannya yang secara akurat dapat membedakan kedua varietas labu, mengurangi risiko pencemaran silang yang dapat merugikan hasil panen. Kedua, dengan menggunakan model ini, petani dapat mengidentifikasi varietas yang paling cocok dengan kondisi lingkungan, yang pada akhirnya dapat meningkatkan hasil panen secara keseluruhan. Petani dapat memilih benih yang memiliki potensi tertinggi untuk menghasilkan labu berkualitas tinggi [1].
 
+> Penyelesaian masalah klasifikasi varietas benih labu memiliki potensi dampak ekonomi yang signifikan dalam industri pertanian. Dengan mampu meningkatkan kemurnian varietas dan mengidentifikasi bibit, petani dan produsen bibit dapat mengoptimalkan hasil panen dan kualitas produk mereka. Hal ini dapat mengurangi risiko pencemaran silang, meningkatkan efisiensi produksi, dan pada akhirnya meningkatkan pendapatan petani serta profitabilitas produsen bibit dalam jangka panjang. Dengan demikian, solusi ini tidak hanya membantu dalam pengelolaan sumber daya pertanian secara lebih efisien, tetapi juga berpotensi meningkatkan daya saing dan keberlanjutan dalam industri pertanian. [2]
+
 ## Business Understanding
 
 ### 1. Problem Statements
 
-- Terdapat kebutuhan untuk mengklasifikasi biji labu antara varietas _Ürgüp Sivrisi_ dan _Çerçevelik_, yang memiliki kemiripan fisik yang tinggi namun perbedaan genetik yang signifikan.
-- Tidak adanya sistem yang efisien dan akurat dalam mengklasifikasi biji labu antara _Ürgüp Sivrisi_ dan _Çerçevelik_ secara otomatis dapat menghambat proses pengelolaan dan pengembangan varietas tanaman labu yang optimal.
-- Petani kesulitan dalam mengidentifikasi varietas, sehingga sulit untuk memilah biji labu yang cocok dengan kondisi lingkungan.
+- Bagaimana cara mengklasifikasi biji labu antara varietas _Ürgüp Sivrisi_ dan _Çerçevelik_ secara otomatis dengan akurasi tinggi, mengingat kemiripan fisik yang tinggi namun perbedaan genetik yang signifikan di antara keduanya?
+- Adakah sistem yang efisien yang dapat membantu dalam mengklasifikasi biji labu secara otomatis, yang dapat mendukung pengelolaan dan pengembangan varietas tanaman labu yang optimal?
+- Bagaimana petani dapat dengan mudah mengidentifikasi varietas biji labu yang sesuai dengan kondisi lingkungan mereka?
 
 ### 2. Goals
 
@@ -31,6 +33,8 @@ _Machine learning_ dapat membedakan varietas bibit biji labu dengan akurat dan e
   ### Solution statements
 
   Terdapat 3 solution statement. Pertama, akan dicoba membangun model **K-Nearest Neighbor (KNN)** dengan mengatur parameter yang ada. Kedua, akan dicoba membangun model **Random Forest Classifier** dengan mengatur berbagai parameter yang ada. Ketiga, akan dibangun model **AdaBoosting** dengan mengatur berbagai parameter yang ada. Ketiga solusi ini akan diukur dengan metrik yang sama yaitu _f1 score_. _F1 score_ digunakan karena memberikan gambaran yang seimbang antara _presisi_ dan _recall_ dalam satu nilai, memudahkan evaluasi kinerja model klasifikasi secara komprehensif. Nilai _f1 score_ dapat dikatakan berhasil ketika angkanya di atas 0.85 atau 85%.
+
+> Solusi yang diusulkan untuk mengklasifikasi varietas biji labu antara Ürgüp Sivrisi dan Çerçevelik dapat mendorong efisiensi biaya dan peningkatan produktivitas. Dengan model klasifikasi yang akurat, penghematan biaya terkait pengujian manual dan identifikasi varietas tercapai, sementara peningkatan produktivitas dan kualitas labu terjadi melalui pemilihan varietas yang tepat untuk lingkungan tumbuh. Selain itu, peningkatan daya saing di pasar domestik dan internasional diperoleh melalui produk unggulan yang ditopang oleh sistem pengklasifikasian biji labu yang akurat.
 
 ## Data Understanding
 
@@ -92,6 +96,15 @@ Menurut gambar 3, diperoleh _insight_ sebagai berikut,
 
 Dengan pemahaman ini, faktor-faktor apa yang mungkin mempengaruhi varietas _Çerçevelik_ atau varietas _Ürgüp Sivrisi_ dalam dataset, serta mempertimbangkan pentingnya setiap fitur dalam membuat prediksi.
 
+#### 4 Relasi fitur dengan varietas
+
+<!-- ![Correlation Matrix](https://raw.githubusercontent.com/mochavin/ML-terapan-dicoding/main/corr.png) -->
+
+![Correlation Matrix](./histogram-class.png)
+Gambar 4. Histogram fitur-fitur dataset dipisahkan berdasarkan varietas.
+
+pada gambar 4 terlihat bahwa fitur luas, luas konveks, diameter, keliling, rasio aspek, dan eksentrisitas untuk varietas _Çerçevelik_ cenderung memiliki nilai yang lebih kecil dibandingkan varietas _Ürgüp Sivrisi_ dan varietas _Çerçevelik_ memiliki sebaran data yang lebih mengerucut ke rata-rata kecuali fitur eksentrisitas yang sebaran datanya mirip untuk kedua varietas. Selain itu, fitur soliditas dan ekstensi memiliki irisan nilai yang mirip pada kedua varietas. Untuk fitur panjang sumbu utama, tingkat kebulatan, dan tingkat kepadatan varietas _Çerçevelik_ memilki kecenderungan nilai yang lebih tinggi dibandingkan dengan varietas _Ürgüp Sivrisi_. Secara umum, varietas _Çerçevelik_ memiliki sebaran data yang lebih kecil dibandingkan dengan varietas _Ürgüp Sivrisi_.
+
 ## Data Preparation
 
 ### 1. Mengecek _Missing Value_
@@ -122,6 +135,8 @@ Dalam proses standarisasi, tidak akan menggunakan teknik seperti _one-hot-encodi
 
 Melalui standarisasi, data menjadi lebih mudah diolah oleh algoritma _machine learning_, memungkinkan mereka untuk bekerja lebih efisien dan menghasilkan hasil yang lebih baik.
 
+> Langkah-langkah persiapan data dalam pemodelan sangat krusial untuk memastikan kinerja model yang optimal. Pertama, deteksi dan penanganan nilai yang hilang adalah untuk mencegah bias dan kesalahan dalam model. Selanjutnya, penting untuk memeriksa keseimbangan data karena ketidakseimbangan kelas dapat membuat model yang tidak seimbang dan kinerja yang buruk terhadap kelas minoritas. Identifikasi dan penanganan _outliers_ juga penting karena _outliers_ dapat mengganggu distribusi data dan memengaruhi parameter model. Pembersihan data dengan menghapus kolom yang redundan membantu mengurangi kompleksitas model dan mencegah terjadinya _overfitting_. Pembagian data menjadi set pelatihan dan pengujian untuk evaluasi obyektif kinerja model. Terakhir, standarisasi data diperlukan untuk memastikan skala yang serupa antar fitur, mencegah dominasi oleh fitur-fitur dengan skala besar. Dengan demikian, langkah-langkah ini dilakukan agar data penggunaan dalam model bisa membuat kinerja yang lebih optimal.
+
 ## Modeling
 
 ### 1. Model Development dengan _K-Nearest Neighbors_ (_KNN_)
@@ -144,53 +159,58 @@ Parameter yang digunakan pada proses pemodelan :
 
 _Random Forest_ memiliki beberapa kelebihan, termasuk kemampuannya untuk mengatasi _overfitting_ melalui penggunaan beberapa pohon keputusan yang dihasilkan secara acak. Selain itu, model ini mampu menangani dataset besar dengan fitur yang banyak, serta memiliki kemampuan untuk menangani data yang hilang tanpa memerlukan preprocessing yang ekstensif. Namun, kelemahan _Random Forest_ termasuk kompleksitas komputasi yang tinggi, terutama pada dataset besar dan kompleks. Selain itu, interpretasi model _Random Forest_ seringkali sulit karena kompleksitasnya yang tinggi, dan kecenderungan untuk menjadi _blackbox_ yang sulit dimengerti oleh manusia.
 
-## 3. Model Development dengan _Boosting Algorithm_
+### 3. Model Development dengan _Boosting Algorithm_
 
 _Boosting_ adalah teknik di _machine learning_ di mana model lemah digunakan secara berulang dan ditingkatkan untuk membuat model yang lebih kuat. Model lemah ini fokus pada kesalahan sebelumnya dan diberi bobot lebih besar untuk memperbaikinya. Dengan cara ini, _Boosting_ meningkatkan performa model secara bertahap, menjadikannya efektif untuk menangani masalah klasifikasi atau regresi yang kompleks. Di sini digunakan _AdaBoost_.
 
-Pemilihan parameter `learning_rate = 0.0001` dan `random_state = 42` dalam `AdaBoostClassifier` didasarkan pada pertimbangan tertentu. `learning_rate = 0.0001` dipilih untuk mengurangi dampak dari setiap pohon keputusan yang ditambahkan dalam proses _boosting_, memungkinkan algoritma untuk secara perlahan menyesuaikan diri dengan data dan mencegah _overfitting_. `random_state = 42` digunakan untuk menginisialisasi generator nomor acak, memastikan hasil yang konsisten pada setiap pelatihan. Penggunaan kedua parameter ini membantu mengoptimalkan performa dan stabilitas model AdaBoost.
+Pemilihan parameter `learning_rate = 0.0001` dan `random_state = 42` dalam `AdaBoostClassifier` didasarkan pada pertimbangan tertentu. `learning_rate = 0.0001` dipilih untuk mengurangi dampak dari setiap pohon keputusan yang ditambahkan dalam proses _boosting_, memungkinkan algoritma untuk secara perlahan menyesuaikan diri dengan data dan mencegah _overfitting_. `random_state = 42` digunakan untuk menginisialisasi generator nomor acak, memastikan hasil yang konsisten pada setiap pelatihan. Penggunaan kedua parameter ini membantu mengoptimalkan performa dan stabilitas model _AdaBoost_.
 
 Kelebihan _Adaboost_ meliputi kemampuannya untuk mengidentifikasi dan menyesuaikan kesalahan prediksi sebelumnya, fokus pada sampel yang sulit diklasifikasikan untuk meningkatkan performa model secara keseluruhan, serta kemampuannya untuk bekerja dengan baik pada dataset yang kompleks. Namun, _Adaboost_ rentan terhadap gangguan oleh data yang _noise_ dan _outlier_, serta sensitif terhadap data yang tidak seimbang dalam kelasnya, yang dapat menghasilkan model yang bias terhadap kelas mayoritas.
 
-### Model Yang Dipilih
-
-Akan dipilih model **Random Forest** karena secara performa lebih baik dibandingkan kedua model lainnya pada kasus ini. Performa yang digunakan adalah _F1 Score_. Cenderung performa model **Random Forest** memberikan solusi terbaik bagi kasus ini karena baik train dan testing memiliki performa lebih baik.
-
 ## Evaluation
 
-_F1 score_ adalah metrik evaluasi klasifikasi yang mengukur presisi (precision) dan recall secara bersamaan. _F1 score_ merupakan rata-rata harmonis dari presisi dan recall, yang memberikan bobot yang sama kepada kedua metrik tersebut. _F1 score_ berguna saat ingin mencapai keseimbangan antara presisi dan recall.
+### F1 Score and Accuracy Evaluation
+
+**F1 Score**
+
+_F1 score_ adalah metrik evaluasi klasifikasi yang mengukur presisi (precision) dan _recall_ secara bersamaan. _F1 score_ merupakan rata-rata harmonis dari presisi dan _recall_, yang memberikan bobot yang sama kepada kedua metrik tersebut.
 
 Formula _F1 Score_:
-$$F1 = 2 \times \frac{precision \times recall}{precision + recall}$$
+$$ F1 = 2 \times \frac{precision \times recall}{precision + recall} $$
 
-Presisi (precision) adalah jumlah true positive dibagi dengan jumlah true positive ditambah false positive. Presisi mengukur seberapa banyak dari kasus positif yang terprediksi benar oleh model.
+Presisi (_precision_) adalah jumlah _true positive_ dibagi dengan jumlah _true positive_ ditambah _false positive_. Presisi mengukur seberapa banyak dari kasus positif yang terprediksi benar oleh model.
 
-$$Precision = \frac{TP}{TP + FP}$$
+$$ Precision = \frac{TP}{TP + FP} $$
 
-Recall (recall), juga dikenal sebagai sensitivity atau true positive rate, adalah jumlah true positive dibagi dengan jumlah true positive ditambah false negative. Recall mengukur seberapa banyak dari kasus positif yang diprediksi dengan benar oleh model.
+_Recall_ juga dikenal sebagai sensitivity atau _true positive_ rate, adalah jumlah _true positive_ dibagi dengan jumlah _true positive_ ditambah _false negative_. _Recall_ mengukur seberapa banyak dari kasus positif yang diprediksi dengan benar oleh model.
 
-$$Recall = \frac{TP}{TP + FN}$$
+$$ Recall = \frac{TP}{TP + FN} $$
 
-Dalam konteks klasifikasi, True Positive (TP) adalah jumlah kasus positif yang diprediksi dengan benar, False Positive (FP) adalah jumlah kasus negatif yang salah diprediksi sebagai positif, dan False Negative (FN) adalah jumlah kasus positif yang salah diprediksi sebagai negatif.
+**Akurasi (Accuracy)**
 
-_F1 score_ memberikan ukuran yang baik tentang kinerja model klasifikasi ketika kelas target tidak seimbang atau ketika biaya kesalahan false positives dan false negatives tidak simetris. Misalnya, dalam kasus di mana lebih peduli dengan false negatives daripada false positives atau sebaliknya.
+Akurasi adalah metrik evaluasi yang mengukur seberapa sering model klasifikasi memberikan prediksi yang benar. Secara sederhana, akurasi adalah rasio antara jumlah prediksi yang benar (positif dan negatif) dengan total jumlah prediksi.
 
-Jadi, _F1 score_ adalah metrik evaluasi klasifikasi yang baik untuk kasus di mana ingin memperhatikan keseimbangan antara presisi dan recall.
+Formula Akurasi:
+$$ Accuracy = \frac{TP + TN}{TP + TN + FP + FN} $$
 
-Berikut hasil peroleh _F1 score_ setiap model :
+Akurasi memberikan gambaran tentang seberapa baik model dapat membedakan antara kelas positif dan negatif secara keseluruhan.
+
+> F1 score dan akurasi adalah dua metrik evaluasi penting dalam mengevaluasi kinerja model klasifikasi. F1 score berguna ketika ingin mencapai keseimbangan antara presisi dan _recall_, sementara akurasi memberikan gambaran tentang seberapa baik model dapat memprediksi secara keseluruhan. Dalam kasus ini, presisi dan _recall_ menjadi kunci utama yang sangat diperhitungkan, sehingga pernggunaan _f1 score_ lebih baik daripada metriks akurasi.
+
+Berikut hasil peroleh _F1 score_ dan _accuracy score_ setiap model :
 
 Tabel 1. Perbandingan _f1 score_ dari tiap model
-| Model | Train | Test |
-|-----------|---------|---------|
-| KNN | 0.892709| 0.864734|
-| RFC | 0.901629| 0.875 |
-| Boosting | 0.850935| 0.867925|
+| | F1 Score Train | F1 Score Test | Accuracy Train | Accuracy Test |
+|---------|----------------|---------------|----------------|---------------|
+| KNN | 0.892709 | 0.864734 | 0.900985 | 0.877462 |
+| rfc | 0.901629 | 0.875 | 0.910832 | 0.881838 |
+| Boosting| 0.850935 | 0.867925 | 0.86488 | 0.877462 |
 
 Berikut gambar bar _chart_ perbandingan nilai _F1 score_ :
 
 ![Chart Metrics](https://raw.githubusercontent.com/mochavin/ML-terapan-dicoding/main/chart_metriks.png)
 
-Gambar 4. Metriks perbandingan _f1 score_ dari tiap model
+Gambar 5. Metriks perbandingan _f1 score_ dari tiap model
 
 Berikut sample hasil prediksi model dalam bentuk tabel :
 
@@ -208,11 +228,27 @@ Tabel 2. Sample hasil prediksi tiap model
 | 697 | 0.0 | 0.0 | 0.0 |
 | 1584 | 1.0 | 1.0 | 1.0 |
 
-Berdasarkan tabel dan chart nilai _F1 score_ cenderung model **Random Forest** lebih baik dari kedua algoritma lainnya. Melalui evaluasi yang telah dilakukan, didapat bahwa model yang terbaik adalah model _Random Forest_ dengan _f1 score_ pada test sebesar 87,5% yang mana artinya proyek ini telah berhasil melampaui skor minimum yang telah ditentukan sehingga diharapkan mampu menyelesaikan _problem statement_ dan mencapai _goals_ yang telah dipaparkan.
+### **Impikasi Praktis**
+
+#### K-Nearest Neighbors (KNN)
+
+_KNN_ cocok digunakan dalam kasus di mana data memiliki struktur yang kompleks dan tidak terstruktur, serta ketika interpretasi model yang sederhana lebih diutamakan daripada performa yang tinggi. Namun, dalam skenario di mana penyimpanan dan waktu komputasi menjadi faktor penting, serta ketika data memiliki banyak dimensi, _KNN_ mungkin bukan pilihan yang optimal.
+
+#### Random Forest Classifier (RFC)
+
+_RFC_ cocok digunakan dalam kasus di mana terdapat banyak fitur dan kategori dalam dataset, serta ketika kinerja yang baik dalam mengatasi masalah kelas tidak seimbang diperlukan. Namun, jika interpretasi model atau waktu pelatihan menjadi faktor kritis, atau jika dataset relatif kecil, _RFC_ mungkin bukan pilihan yang optimal.
+
+#### Boosting
+
+Adaboost cocok digunakan dalam kasus di mana interpretasi model tidak terlalu penting dan ketika diperlukan model yang kuat dari model lemah. Namun, jika data cenderung _noise_ atau mengandung banyak _outliers_, atau jika keseimbangan kelas menjadi perhatian utama, Adaboost mungkin tidak memberikan hasil yang optimal.
+
+> Berdasarkan tabel, chart, dan implikasi praktis metriks _F1 score_ menjadi metriks yang relevan dalam kasus ini. Model **Random Forest** lebih baik dari kedua algoritma lainnya. Melalui evaluasi yang telah dilakukan, didapat bahwa model yang terbaik adalah model _Random Forest_ dengan _f1 score_ pada test sebesar 87,5% yang mana artinya proyek ini telah berhasil melampaui skor minimum yang telah ditentukan sehingga diharapkan mampu menyelesaikan _problem statement_ dan mencapai _goals_ yang telah dipaparkan.
 
 ## _Conclusion_
 
 Dalam proyek ini, penulis telah menyelesaikan serangkaian tahapan yang penting. Penulis memulai dengan memahami domain proyek dan kasus bisnis yang ingin diselesaikan. Setelah itu, penulis menyelami data yang tersedia, menyiapkan dataset, melakukan proses pemodelan, dan mengevaluasi hasilnya. Penulis berhasil menyelesaikan tantangan bisnis yang dihadapi dan mencapai tujuan dengan membangun 3 model yang berbeda. Dari ketiga model tersebut, penulis memilih model `Random Forest` sebagai solusi terbaik untuk masalah yang dihadapi.
+
+Untuk mengembangkan proyek ini lebih lanjut, langkah-langkah berikut dapat diperhatikan. Penyetelan ulang hyperparameter untuk meningkatkan kinerja model. Melalui teknik seperti _Grid Search_ atau _Random Search_, model dapat dioptimalkan dengan parameter yang lebih sesuai. Ketiga, eksplorasi model _ensemble_ menjadi pilihan menarik, di mana prediksi beberapa model dapat digabungkan untuk meningkatkan akurasi dan generalisasi model secara keseluruhan. Dengan mempertimbangkan langkah-langkah ini, proyek dapat ditingkatkan dalam hal akurasi, reliabilitas, dan aplikabilitasnya dalam pengambilan keputusan di lapangan.
 
 ### REFERENCES
 
